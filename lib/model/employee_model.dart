@@ -34,6 +34,6 @@ class EmployeeModel {
         address: Address.fromJson(json['address']),
         phone: json['phone'],
         website: json['website'],
-        company: Company.fromJson(json.getObject('company')),
+        // company: Company.fromJson(json.getObject('company')),
       );
 }

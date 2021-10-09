@@ -1,3 +1,4 @@
+import 'package:employee_directory/model/employee_model.dart';
 import 'package:employee_directory/redux/actions/common_actions.dart';
 import 'package:employee_directory/redux/app_redux.dart';
 import 'package:employee_directory/redux/viewModels/employee_view_model.dart';
@@ -39,7 +40,7 @@ class EmployeesPage extends StatelessWidget {
                       onChanged: viewModel.onSearch,
                       decoration: const InputDecoration(
                         labelText: 'Search',
-                        suffixIcon: Icon(Icons.search),
+                        suffixIcon:  Icon(Icons.search),
                       ),
                     ),
                   ),
@@ -52,9 +53,12 @@ class EmployeesPage extends StatelessWidget {
                             Duration.zero, () => viewModel.fetchEmployees()),
                         child: ListView.builder(
                             itemCount: viewModel.employees.length,
-                            itemBuilder: (cont, post) {
-                              return const EmployeeTile(
-                                  sendByMe: true, message: "");
+                            itemBuilder: (cont, position) {
+                              // return Container();
+                              return EmployeeTile(
+                                employee:
+                                    viewModel.employees.elementAt(position),
+                              );
                             }),
                       ),
                     ),
@@ -70,40 +74,67 @@ class EmployeesPage extends StatelessWidget {
 }
 
 class EmployeeTile extends StatelessWidget {
-  final bool sendByMe;
-  final String message;
+  final EmployeeModel employee;
 
-  const EmployeeTile({Key? key, required this.sendByMe, required this.message})
-      : super(key: key);
+  const EmployeeTile({Key? key, required this.employee}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 8),
-      alignment: sendByMe ? Alignment.centerRight : Alignment.centerLeft,
+    return GestureDetector(
+      onTap: () {
+        // Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //         builder: (context) => ConversationScreen(
+        //               name: userName,
+        //               profilePicPath: userPicAssetPath,
+        //             )
+        //     ));
+      },
       child: Container(
-        margin:
-            sendByMe ? EdgeInsets.only(left: 30) : EdgeInsets.only(right: 30),
-        padding: EdgeInsets.only(top: 17, bottom: 17, left: 20, right: 20),
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: sendByMe
-                    ? [const Color(0xffD9B372), const Color(0xffA2834D)]
-                    : [const Color(0x1AFFFFFF), const Color(0x1AFFFFFF)],
-                begin: FractionalOffset.centerLeft,
-                end: FractionalOffset.centerRight),
-            borderRadius: sendByMe
-                ? BorderRadius.only(
-                    topLeft: Radius.circular(23),
-                    bottomLeft: Radius.circular(23))
-                : BorderRadius.only(
-                    topRight: Radius.circular(23),
-                    bottomRight: Radius.circular(23))),
-        child: Text(
-          message,
-          textAlign: TextAlign.start,
-          style: TextStyle(
-              color: Colors.white, fontSize: 14, fontWeight: FontWeight.w300),
+        margin: const EdgeInsets.only(bottom: 8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              width: 70.0,
+              height: 70.0,
+              decoration: BoxDecoration(
+                color: const Color(0xff213A50),
+                image: DecorationImage(
+                  image: NetworkImage(employee.profileImage ?? ""),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: const BorderRadius.all(Radius.circular(40.0)),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Text(
+                          employee.name,
+                          style: Theme.of(context).textTheme.subtitle2,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          employee.company?.name ?? "",
+                        ),
+                        const SizedBox(height: 16),
+                        Divider()
+                      ],
+                    ),
+                  ),
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.phone))
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
